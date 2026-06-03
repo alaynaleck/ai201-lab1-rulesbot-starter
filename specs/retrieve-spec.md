@@ -117,8 +117,7 @@ Apply a lenient threshold (drop distance > .7) to filter out irrevelant queries,
 *How does your implementation behave when: (a) the collection is empty, (b) the query matches no chunks well, (c) the query matches chunks from multiple games?*
 
 ```
-
-[your answer here]
+When the collection is empty, the query will return no results; the same for when the query matches no chunks below the threshold. If the query matches chunks from multiple games, it will return results from all games. 
 
 ```
 
@@ -132,10 +131,10 @@ Apply a lenient threshold (drop distance > .7) to filter out irrevelant queries,
 
 ```
 
-Query: [your test query]
-Top result game: [game name]
-Distance score: [score]
-Does it make sense? [yes / no / explain]
+Query: How do you win?
+Top result game: Catan
+Distance score: .42
+Does it make sense? Yes-- while the results span multiple games, all excerpts contain references to winning, and the question lacks designation of a specific game.
 
 ```
 
@@ -143,7 +142,7 @@ Does it make sense? [yes / no / explain]
 
 ```
 
-[your answer here]
+Query results can return different games when the question is too vague, which isn't a database issue since the results return semantically similar results. 
 
 ```
 
