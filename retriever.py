@@ -1,6 +1,6 @@
 import chromadb
 from chromadb.utils import embedding_functions
-from config import CHROMA_COLLECTION, CHROMA_PATH, EMBEDDING_MODEL, N_RESULTS
+from config import CHROMA_COLLECTION, CHROMA_PATH, EMBEDDING_MODEL, N_RESULTS, RELEVANCE_THRESHOLD
 
 # Embedding function and ChromaDB client are initialized once at module load.
 # sentence-transformers downloads the model on first use — this may take
@@ -76,10 +76,10 @@ def retrieve(query, n_results=N_RESULTS):
     # actual results live at index [0]. The three lists are parallel — result
     # i's text, metadata, and distance all share the same position.
     #
-    # Relevance threshold: cosine distance ranges 0 (identical) to 2 (opposite);
-    # lower means more similar. We drop anything at or above 0.7 so clearly
-    # off-topic queries return [] and generate_response() can honestly say the
-    # answer isn't in the rules, rather than feeding the model weak context.
+    # Relevance threshold: cosine distance is lower the more similar a chunk is.
+    # Drop anything at or above 0.7 so clearly off-topic queries return [] and
+    # generate_response() can honestly say the answer isn't in the rules,
+    # rather than feeding the model weak, loosely-related context.
     return [
         {"text": text, "game": metadata["game"], "distance": distance}
         for text, metadata, distance in zip(
@@ -87,4 +87,5 @@ def retrieve(query, n_results=N_RESULTS):
             results["metadatas"][0],
             results["distances"][0],
         )
+        if distance < RELEVANCE_THRESHOLD
     ]

@@ -17,5 +17,8 @@ CHROMA_PATH = "./chroma_db"
 # --- Retrieval ---
 N_RESULTS = 3
 
+# --- Relevance threshold ---
+RELEVANCE_THRESHOLD = 0.7
+
 # --- Documents ---
 DOCS_PATH = "./docs"
