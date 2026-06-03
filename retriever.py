@@ -50,8 +50,6 @@ def retrieve(query, n_results=N_RESULTS):
     """
     Find the most relevant rule chunks for a user's question.
 
-    TODO — Milestone 2:
-
     Use _collection.query() to run a semantic search. It takes:
       - query_texts : a list containing your query string
       - n_results   : how many results to return
@@ -68,5 +66,25 @@ def retrieve(query, n_results=N_RESULTS):
     if _collection.count() == 0:
         return []
 
-    # Your implementation here.
-    return []
+    results = _collection.query(
+        query_texts=[query],
+        n_results=n_results,
+        include=["documents", "metadatas", "distances"],
+    )
+
+    # query() batches results per query string; we sent one query, so the
+    # actual results live at index [0]. The three lists are parallel — result
+    # i's text, metadata, and distance all share the same position.
+    #
+    # Relevance threshold: cosine distance ranges 0 (identical) to 2 (opposite);
+    # lower means more similar. We drop anything at or above 0.7 so clearly
+    # off-topic queries return [] and generate_response() can honestly say the
+    # answer isn't in the rules, rather than feeding the model weak context.
+    return [
+        {"text": text, "game": metadata["game"], "distance": distance}
+        for text, metadata, distance in zip(
+            results["documents"][0],
+            results["metadatas"][0],
+            results["distances"][0],
+        )
+    ]
